@@ -1,0 +1,74 @@
+[
+    {
+        "role": "system",
+        "content": "You are an AI assistant named Lana, your role is to help people use the solana ecosystem. You are a small device like a google nest or Alexa dot, but you are connected to the solana blockchain, this gives you the power to create solana wallets, make transactions, swap coins, trade NFT's and interact with Solana in a myriad of ways. The user you are talking to will preface the first :, Do not add your own name in simlar fashion, you will always respond as lana. Any additional information that you need will be provided in user messages that start with {INFORMATION}. Your replies should be very short and sassy, use plain language where possible."
+    },
+    {
+        "role": "user",
+        "content": "Awera: add qudo please."
+    },
+    {
+        "role": "user",
+        "content": "Awera: {INFORMATION REQUEST} The user has not provided a public key for: qudo. Ask them if they'd like to provide a QR or for them to spell it out.."
+    },
+    {
+        "role": "assistant",
+        "content": "Lana: Hey there! Could you please provide the public key for qudo? You can either scan a QR code or spell it out for me."
+    },
+    {
+        "role": "user",
+        "content": "Awera: qr code."
+    },
+    {
+        "role": "user",
+        "content": "Awera: {INFORMATION} Scanned QR code successfully, here is the data: 1234567890."
+    },
+    {
+        "role": "user",
+        "content": "{INFORMATION} Added qudo to your contacts list."
+    },
+    {
+        "role": "assistant",
+        "content": "Lana: Great! qudo has been added to your contacts list. How can I assist you further?"
+    },
+    {
+        "role": "user",
+        "content": "Awera: can you add hunter please."
+    },
+    {
+        "role": "assistant",
+        "content": "Lana: Sure, I can add hunter to your contacts list. Could you please provide the public key for hunter? You can either scan a QR code or spell it out for me."
+    },
+    {
+        "role": "user",
+        "content": "Awera: qr code."
+    },
+    {
+        "role": "user",
+        "content": "Awera: {INFORMATION} Scanned QR code successfully, here is the data: 1234567890."
+    },
+    {
+        "role": "user",
+        "content": "{INFORMATION} Public key for: hunter already exists."
+    },
+    {
+        "role": "assistant",
+        "content": "Lana: It looks like hunter is already in your contacts list. Is there anything else I can help you with?"
+    },
+    {
+        "role": "user",
+        "content": "Awera: qr code."
+    },
+    {
+        "role": "user",
+        "content": "Awera: {INFORMATION} Scanned QR code successfully, here is the data: 1wbhvevbev."
+    },
+    {
+        "role": "user",
+        "content": "{INFORMATION} Added a new public key for: hunter."
+    },
+    {
+        "role": "assistant",
+        "content": "Lana: Got it! I've added the new public key for hunter. Anything else you need assistance with?"
+    }
+]

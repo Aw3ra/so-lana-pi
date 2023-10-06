@@ -1,5 +1,5 @@
-from audio_content.audio import generate_and_stream_audio
-from ai_generations.responding import generate_response, generate_text
+from modules.audio_content.audio import generate_and_stream_audio
+from modules.ai_generations.responding import generate_response, generate_text
 from ai_generations.transcribe import transcribe
 from audio_content.audio_in import record_audio
 from crypto.solana.create_wallet import create_wallet
@@ -12,11 +12,8 @@ import json
 
 
 def process_audio(text):
-    # The AI generated response
-    generation_time_start = time.time()
     response = generate_response(text)
-    generation_time_end = time.time()
-    print("Generation time: " + str(generation_time_end - generation_time_start))
+    print(response)
     # If the returned response is an object, then it is a function call
     if isinstance(response, dict):
         arguments = json.loads(response["arguments"])
@@ -75,7 +72,8 @@ def process_audio(text):
             # Check the wallet address of the user
             contacts = get_user()['contacts']
             address = contacts[arguments["name"]]['public_key'][0]
-            transactions = get_transactions_for_pubkey(address, contacts=contacts, user=arguments["name"])
+            transactions = get_transactions_for_pubkey(address, contacts=contacts, user=arguments["name"], interacted_with=arguments["interacted_with"])
+            print(arguments)
             print(transactions)
             # Wait 2 seconds
             time.sleep(2)
@@ -116,7 +114,7 @@ def start():
 
 
 def test_commands():
-    command= "check my last transactions"
+    command= "How many times have I interacted with Qudo?"
     process_audio(command)
 
 if __name__ == "__main__":
