@@ -14,7 +14,7 @@ with open(file_path) as json_file:
 functions=[
       {
         "name": "crypto_send_money",
-        "description": "Send someone money to someone else",
+        "description": "Send some money to someone else",
         "parameters": {
             "type": "object",
             "properties": {
@@ -74,12 +74,16 @@ functions=[
                     "type": "string",
                     "description": "The name of the contact or wallet to check the transactions of",
                 },
+                "token":{
+                    "type": "string",
+                    "description": "The token to check the balance of",
+                },
             }
         }
       },
       {
         "name": "crypto_check_transactions",
-        "description": "Check the transactions of a requested contact or wallet",
+        "description": "Check the transactions of a requested contact or wallet, the name of the user is required",
         "parameters": {
             "type": "object",
             "properties": {
@@ -90,7 +94,12 @@ functions=[
                 "interacted_with":{
                     "type": "string",
                     "description": "The name of the contact that the requested name has interacted with",
-                }
+                },
+                "amount":{
+                    "type": "number",
+                    "description": "The amount of transactions to return",
+                    "default": "100",
+                },
             }
         }, 
         "required": ["name"]
@@ -107,6 +116,19 @@ functions=[
                 },
             }
         },
+      },
+      {
+        "name": "crypto_check_price",
+        "description": "Check the price of a token",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "token":{
+                    "type": "string",
+                    "description": "The token to check the price of"
+                },
+            }
+        },
       }
 ]
 
@@ -119,7 +141,7 @@ def generate_response(prompt):
   while True:
     try:
         response = openai.ChatCompletion.create(
-          model='gpt-3.5-turbo',
+          model='gpt-4',
           messages=conversation,
           functions=functions,
         )
@@ -144,7 +166,6 @@ def generate_text(prompt):
     try:
       openai.api_key = os.environ["OPEN_AI_KEY"]
       # If the content starts with {INFORMATION} or {ERROR}, then it is a command and dont append the user name to the prompt
-      print(prompt)
       if prompt.startswith("{INFORMATION}") or prompt.startswith("{ERROR}"):
         conversation.append({'role': 'user', 'content':prompt+'.'})
       else:

@@ -3,6 +3,8 @@ import os
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 file_path = os.path.join(dir_path, 'user.json')
+# Get the conversation from the src directory, which is up two directories from the current directory
+conversation_directory = os.path.join(dir_path, '..', '..')
 
 
 # Load in the conversation json file
@@ -10,10 +12,11 @@ with open(file_path) as json_file:
     user = json.load(json_file)
 
 def clear_conversation():
-    # Clear everything except the first message in the conversation
-    user["conversation"] = user["conversation"][:1]
-    with open(file_path, 'w') as outfile:
-        json.dump(user, outfile, indent=4)
+    with open(os.path.join(conversation_directory, 'conversation.json')) as json_file:
+        conversation = json.load(json_file)
+    conversation = conversation[:1]
+    with open(os.path.join(conversation_directory, 'conversation.json'), 'w') as outfile:
+        json.dump(conversation, outfile, indent=4)
 
 def get_user():
     return user

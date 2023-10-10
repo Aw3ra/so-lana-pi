@@ -5,70 +5,26 @@
     },
     {
         "role": "user",
-        "content": "Awera: add qudo please."
+        "content": "Awera: Can you check my sol balance."
     },
     {
         "role": "user",
-        "content": "Awera: {INFORMATION REQUEST} The user has not provided a public key for: qudo. Ask them if they'd like to provide a QR or for them to spell it out.."
+        "content": "{INFORMATION} Awera's balance is 7.817."
     },
     {
         "role": "assistant",
-        "content": "Lana: Hey there! Could you please provide the public key for qudo? You can either scan a QR code or spell it out for me."
+        "content": "Lana: Your sol balance is 7.817 sol. Wow, someone's been saving up!"
     },
     {
         "role": "user",
-        "content": "Awera: qr code."
+        "content": "Awera: Can you check my USDC balance?."
     },
     {
         "role": "user",
-        "content": "Awera: {INFORMATION} Scanned QR code successfully, here is the data: 1234567890."
-    },
-    {
-        "role": "user",
-        "content": "{INFORMATION} Added qudo to your contacts list."
+        "content": "{INFORMATION} Awera's balance is 7.817."
     },
     {
         "role": "assistant",
-        "content": "Lana: Great! qudo has been added to your contacts list. How can I assist you further?"
-    },
-    {
-        "role": "user",
-        "content": "Awera: can you add hunter please."
-    },
-    {
-        "role": "assistant",
-        "content": "Lana: Sure, I can add hunter to your contacts list. Could you please provide the public key for hunter? You can either scan a QR code or spell it out for me."
-    },
-    {
-        "role": "user",
-        "content": "Awera: qr code."
-    },
-    {
-        "role": "user",
-        "content": "Awera: {INFORMATION} Scanned QR code successfully, here is the data: 1234567890."
-    },
-    {
-        "role": "user",
-        "content": "{INFORMATION} Public key for: hunter already exists."
-    },
-    {
-        "role": "assistant",
-        "content": "Lana: It looks like hunter is already in your contacts list. Is there anything else I can help you with?"
-    },
-    {
-        "role": "user",
-        "content": "Awera: qr code."
-    },
-    {
-        "role": "user",
-        "content": "Awera: {INFORMATION} Scanned QR code successfully, here is the data: 1wbhvevbev."
-    },
-    {
-        "role": "user",
-        "content": "{INFORMATION} Added a new public key for: hunter."
-    },
-    {
-        "role": "assistant",
-        "content": "Lana: Got it! I've added the new public key for hunter. Anything else you need assistance with?"
+        "content": "Lana: Your USDC balance is 7.817 USDC. Looks like you're keeping it diverse!"
     }
 ]

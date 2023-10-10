@@ -1,4 +1,3 @@
-from solathon import Client, PublicKey, utils
 import requests
 import json
 import os
@@ -13,13 +12,9 @@ API_KEY=os.environ["RPC_URL"]
 HELIUS_KEY=os.environ["HELIUS_KEY"]
 
 def check_balance(public_key):
-    client = Client(API_KEY)
-    balance = utils.lamport_to_sol(client.get_balance(PublicKey(public_key))['result']['value'])
-    # Round up to 3 decimal places
-    balance = round(balance, 3)
-    return balance
-
-
+    url = f"https://api.helius.xyz/v0/{public_key}/balances?api-key={HELIUS_KEY}"
+    response = requests.get(url).json()
+    return response
 
 
 def get_transactions_for_pubkey(public_key, user="uknown", contacts={}, amount=2000, interacted_with="none"):
@@ -36,7 +31,7 @@ def get_transactions_for_pubkey(public_key, user="uknown", contacts={}, amount=2
     url = f"https://api.helius.xyz/v0/addresses/{public_key}/transactions?api-key={HELIUS_KEY}"
     response = requests.get(url).json()
     returned_lst=[]
-    for transaction in response[:2000]:
+    for transaction in response[:amount]:
         desc = transaction["description"]
         if desc:
             # If an interacted_with is specified, then only return transactions that have interacted with that address
@@ -58,30 +53,7 @@ def get_transactions_for_pubkey(public_key, user="uknown", contacts={}, amount=2
                     # Mark it as a solana address and replace it in the string with the first 4 digits and ...
                     desc = desc.replace(word, word[:4]+"..")
             returned_lst.append(shorten_sentences(desc))
-
     return returned_lst
             
 if __name__ == "__main__":
-    known_accounts = {
-        "Awera": {
-            "public_key": ["9DtsixQAmaHZ1UPRqoGFNocezYYWBXFjU9pHtSCrRYzc", "HNdVkA1GC1JGL2REpiTCugibnM6RjSWkSUcMM7PJ6QCg"],
-            "domains": ["awera.sol"]
-        },
-        "Hunter": {
-            "public_key": ["3rK1ufxPtNH22umXQzBvyRhigwJSnxz9VoDnqe5ANaDS"],
-            "domains": ["hosty.sol"]
-        },
-        "Qudo": {
-            "public_key": ["3rK1ufxPtNH22umXQzBvyRhigwJSnxz9VoDnqe5ANaDS"],
-            "domains": ["qudo.sol"]
-        },
-        "Drip":{
-            "public_key": ["DRiPPP2LytGjNZ5fVpdZS7Xi1oANSY3Df1gSxvUKpzny"],
-            "domains": []
-        },
-        "Bangerz":{
-            "public_key": ["BNGZxSZmbvHaPUb8xda2ikHypTuaa6MhMw98YWNfvpwL"],
-            "domains": []
-        }   
-    }
-    print(json.dumps(get_transactions_for_pubkey("9DtsixQAmaHZ1UPRqoGFNocezYYWBXFjU9pHtSCrRYzc", user = "Awera", interacted_with="Drip", contacts=known_accounts), indent=4))
+    print(json.dumps(check_balance("9DtsixQAmaHZ1UPRqoGFNocezYYWBXFjU9pHtSCrRYzc"), indent=4))
