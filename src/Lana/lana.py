@@ -38,6 +38,7 @@ class Lana:
     def process_command(self, text):
         """Processes user's spoken commands."""
         response = generate_response(text)
+        print(response)
         # If the returned response is an object, then it is a function call
         if isinstance(response, dict):
             if response["name"].startswith("crypto"):
@@ -47,10 +48,8 @@ class Lana:
             elif response["name"].startswith("qr_scan"):
                 code = self.scan_qr()
                 command = generate_response(code)
-                print(command)
                 if isinstance(command, dict):
                     result = user_handler(command)
-                    print(result)
                 else:
                     result = command
             if result:
