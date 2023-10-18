@@ -136,7 +136,7 @@ class AudioRecorder:
         with open(audio_file, 'rb') as file:
             try:
                 response = requests.post(
-                    'https://heylana-worker.hostynft.workers.dev/',
+                    'https://heylana.dev/api/lanaactive',
                     headers={'Content-Type': 'audio/wav'},
                     data=file
                 )
@@ -150,14 +150,6 @@ class AudioPlayer:
     def __init__(self, voice="Lana - calm"):
         self.voice = voice
         self.printing = True
-
-    def generate_and_play(self, text):
-        audio_time_start = time.time()
-        set_api_key = "cbbc88987232bc4e6af5db6015931420"
-        audio = generate(text="--" + text, voice=self.voice)
-        audio_time_end = time.time()
-        print("Audio time: " + str(audio_time_end - audio_time_start))
-        play(audio)
 
     def generate_and_stream(self, text):
         if self.printing:
