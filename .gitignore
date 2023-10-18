@@ -2,3 +2,6 @@
 user.json
 node-v8.9.0-linux-armv7l.tar.gz
 node-v8.9.0-linux-armv7l
+node_modules
+wrangler.toml
+.wrangler

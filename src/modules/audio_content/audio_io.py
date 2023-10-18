@@ -5,19 +5,16 @@ import alsaaudio
 import numpy as np
 from ctypes import *
 from contextlib import contextmanager
-import pyaudio
 from elevenlabs import generate, set_api_key, play, stream
 import os
 import time
-import openai
-
-
+import requests
 
 # Configuration for Eleven Labs
 os.environ['PATH'] += r";C:\Program Files\ffmpeg-master-latest-win64-gpl\bin"
 OPENAI_KEY = os.environ["OPEN_AI_KEY"]
 access_key = os.environ["PICOVOICE_KEY"]
-
+handle = pvporcupine.create(access_key=access_key, keyword_paths=['wakewords.ppn'])
 
 # Error handler for ALSA
 ERROR_HANDLER_FUNC = CFUNCTYPE(None, c_char_p, c_int, c_char_p, c_int, c_char_p)
@@ -49,9 +46,9 @@ class AudioRecorder:
                 alsaaudio.PCM_CAPTURE,
                 channels=2,
                 rate=handle.sample_rate,
-                format=alsaaudio.PCM_FORMAT_S32_LE,
                 periodsize=handle.frame_length,
-                device='plughw:1,0'
+                format=alsaaudio.PCM_FORMAT_S32_LE,
+                device='dmic_sv'
             )
 
             audio_buffer = []
@@ -78,6 +75,40 @@ class AudioRecorder:
                     audio_buffer = audio_buffer[handle.frame_length:]
                     return frame
                 return None
+            
+            def record_audio_for_duration(duration_seconds):
+                num_frames = int(duration_seconds * handle.sample_rate / handle.frame_length)
+                recording_frames = []
+                for _ in range(num_frames):
+                    frame = get_next_audio_frame()
+                    if frame:
+                        recording_frames.extend(frame)
+                return np.array(recording_frames, dtype=np.int16)
+            
+            def is_silence(frame, threshold=20420):
+                """Check if the frame represents silence."""
+                rms = np.sqrt(np.mean(np.square(frame)))
+                print(rms)
+                return rms < threshold
+
+            def record_until_silence(silence_threshold=20420, max_silence_frames=20):
+                recording_frames = []
+                silence_frames = 0
+                while True:
+                    frame = get_next_audio_frame()
+                    if not frame:
+                        break
+
+                    recording_frames.extend(frame)
+                    if is_silence(frame, silence_threshold):
+                        silence_frames += 1
+                    else:
+                        silence_frames = 0
+
+                    if silence_frames >= max_silence_frames:
+                        break
+
+                return np.array(recording_frames, dtype=np.int16)
 
             print("Listening for wake word...")
             while True:
@@ -89,27 +120,12 @@ class AudioRecorder:
                         recording_started = True
 
                     if recording_started:
-                        rms = np.sqrt(np.mean(np.square(frame)))
-                        print(f"RMS value: {rms}")  # Debug print
-                        if rms > self.silence_threshold:
-                            frames.append(np.array(frame, dtype=np.int16).tobytes())
-                            silence_frames = 0
-                        else:
-                            silence_frames += 1
-                            print(f"Silent frames: {silence_frames}")  # Debug print
-
-
-                        if silence_frames * handle.frame_length / handle.sample_rate > self.silence_duration:
-                            print("Recording finished.")
-                            break
+                        frames = record_audio_for_duration(5)
+                        break
 
             if len(frames) * handle.frame_length / handle.sample_rate > self.min_audio_duration:
                 filename = self.OUTPUT_FILENAME
-                with wave.open(filename, 'wb') as wf:
-                    wf.setnchannels(1)
-                    wf.setsampwidth(2)
-                    wf.setframerate(handle.sample_rate)
-                    wf.writeframes(b''.join(frames))
+                wavio.write(filename, frames, handle.sample_rate)
                 return filename
             else:
                 print("Recording was too short, discarding...")
@@ -117,9 +133,17 @@ class AudioRecorder:
     
     def transcribe(self, audio_filename):   # added audio_filename as an argument
         audio_file= open(audio_filename, "rb")
-        openai.api_key = OPENAI_KEY
-        transcript = openai.Audio.transcribe("whisper-1", audio_file)
-        return transcript.text
+        with open(audio_file, 'rb') as file:
+            try:
+                response = requests.post(
+                    'https://heylana-worker.hostynft.workers.dev/',
+                    headers={'Content-Type': 'audio/wav'},
+                    data=file
+                )
+                response_data = response.json()
+                return response_data
+            except requests.RequestException as error:
+                return f"Error: {error}"
 
 
 class AudioPlayer:
