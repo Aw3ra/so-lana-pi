@@ -1,12 +1,6 @@
 import requests
 import json
 import os
-from solathon import Keypair
-
-def create_wallet():
-    keypair = Keypair()
-    # Return an object with the public and private key
-    return keypair
 
 API_KEY=os.environ["RPC_URL"]
 HELIUS_KEY=os.environ["HELIUS_KEY"]

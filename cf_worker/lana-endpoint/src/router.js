@@ -1,6 +1,8 @@
 import { Router } from 'itty-router';
 import { transcribe, chat } from './openai/response.js';
-import { get_messages } from './supabase/database.js';
+import { get_messages, add_message } from './supabase/database.js';
+import { get_balance } from './commands/modules/crypto.js';
+import { handle_function } from './commands/handler.js';
 
 // now let's create a router (note the lack of "new")
 const router = Router();
@@ -26,22 +28,33 @@ router.post('/api/lanaresponse', async (request, env) => {
 	messages.push(audio_text);  
 	//Retrieve the assistant message from OpenAI and add it to the messages array
 	let assistant_response = await chat(messages, env.OPENAI_API_KEY);
+	const finish_reason = assistant_response.choices[0].finish_reason;
 	// If the response is a dictionary, it is a command
-	if (typeof assistant_response === "object") {
-		// Do some more logic here, but for now just create another message
-		assistant_response = "Command received.";
+	let new_messages = [];
+	if (finish_reason === "function_call") {
+		// Handle the function, and return an array of messages
+		const response = await handle_function(assistant_response, env);
+		// For each message in the response, add it to the mnew messages array
+		response.map((message) => {
+			new_messages.push(message);
+		});
 	}
 	else {
-		// If the response is not a dictionary, it is a message
-		assistant_response = assistant_response.choices[0].message.content;
+		// If the response is not a function call, add the response to the new messages array
+		new_messages.push({role: "assistant", content: assistant_response.choices[0].message.content});
 	}
+	// For each of the new messages, do an promise.all await add_message
+	await Promise.all(new_messages.map(async (message) => {
+		await add_message(message, env.SUPABASE_KEY, env.DB);
+	}));
 
-	messages.push({role: "assistant", content: assistant_response});
-	// Return the messages array as a JSON object
-	return new Response(JSON.stringify(messages), { status: 200, headers: { 'Content-Type': 'application/json' } });
+	// Return the last message content in the array
+	return new Response(JSON.stringify(new_messages[new_messages.length - 1].content), { status: 200, headers: { 'Content-Type': 'application/json' } });
 });
 
 // 404 for everything else
 router.all('*', () => new Response('Not Found.', { status: 404 }));
 
 export default router;
+
+
