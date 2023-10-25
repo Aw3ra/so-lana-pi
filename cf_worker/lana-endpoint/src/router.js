@@ -8,7 +8,16 @@ import { handle_function } from './commands/handler.js';
 const router = Router();
 
 // GET collection index
-router.get('/api/todos', () => new Response('Todos Index!'));
+router.get('/api/testing', async (request, env) => {
+	const text = "How many users are on solana?"
+	let assistant_response = await chat([{role: "user", content: text}], env.OPENAI_API_KEY);
+	const response = await handle_function(assistant_response, env);
+	let assistant_response2 = await chat([
+		{role: "user", content: text},
+		{role: "user", content: response}
+	], env.OPENAI_API_KEY, false);
+	return new Response(assistant_response2.choices[0].message.content, { status: 200, headers: { 'Content-Type': 'application/json' } });
+});
 
 // GET item
 router.get('/api/todos/:id', ({ params }) => new Response(`Todo #${params.id}`));

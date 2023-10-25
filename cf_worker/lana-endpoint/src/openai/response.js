@@ -1,33 +1,4 @@
-const lana_functions=[
-  {
-    "name": "check_solana_price",
-    "description": "Check the current price of solana",
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "token_name":{
-                "type": "string",
-                "description": "The name of the token to check"
-            }
-        }
-    },
-    "required": ["name", "amount"]
-  },
-  {
-    "name": "check_solana_balance",
-    "description": "Check the current balance of solana for a given wallet address",
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "wallet":{
-                "type": "string",
-                "description": "The wallet to check"
-            }
-        }
-    },
-  }
-]
-
+import {lana_functions} from "./lana_functions.js";
 
 export async function transcribe(request, API_Key)
     {
